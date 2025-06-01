@@ -59,7 +59,7 @@ def create_app():
             print("Database initialised and superuser created.")
         else:
             print("Superuser already exists.")
-            
+            #comp
 
     return app
 
