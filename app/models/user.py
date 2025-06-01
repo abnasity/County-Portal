@@ -37,3 +37,4 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         role_names = [role.name for role in self.roles]
         return f'<User {self.email}> Roles: {role_names}'
+#comp
