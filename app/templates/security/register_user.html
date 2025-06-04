@@ -1,0 +1,226 @@
+{% extends "base.html" %}                                                     
+                                                                                  
+    {% block title %}Register - County Services Portal{% endblock %}              
+                                                                                  
+    {% block content %}                                                           
+    <div class="auth-container">                                                  
+        <div class="auth-card">                                                   
+            <div class="auth-header">                                             
+                <i class="fas fa-user-plus fa-2x mb-3"></i>                       
+                <h1>Create Account</h1>                                           
+                <p>Join your county's digital services platform</p>               
+            </div>                                                                
+                                                                                  
+            <div class="auth-body">                                               
+                <!-- Display flash messages -->                                   
+                {% with messages = get_flashed_messages(with_categories=true) %}  
+                    {% if messages %}                                             
+                        {% for category, message in messages %}                   
+                            <div class="alert alert-{{ 'danger' if category ==    
+  'error' else category }} alert-dismissible fade show">                          
+                                <i class="fas fa-{{ 'exclamation-triangle' if     
+  category == 'error' else 'info-circle' }} me-2"></i>                            
+                                {{ message }}                                     
+                                <button type="button" class="btn-close" data-bs-  
+  dismiss="alert"></button>                                                       
+                            </div>                                                
+                        {% endfor %}                                              
+                    {% endif %}                                                   
+                {% endwith %}                                                     
+                                                                                  
+                <form method="POST" action="{{ url_for_security('register') }}"   
+  novalidate>                                                                     
+                    {{ register_user_form.hidden_tag() }}                         
+                                                                                  
+                    <div class="row g-3">                                         
+                        <!-- First Name -->                                       
+                        <div class="col-md-6">                                    
+                            <div class="form-floating">                           
+                                {{ register_user_form.first_name(class="form-     
+  control" + (" is-invalid" if register_user_form.first_name.errors else "")) }}  
+                                {{ register_user_form.first_name.label(class="form-
+  label") }}                                                                      
+                                {% if register_user_form.first_name.errors %}     
+                                    <div class="invalid-feedback">                
+                                        {% for error in register_user_form.       
+  first_name.errors %}                                                            
+                                            <div>{{ error }}</div>                
+                                        {% endfor %}                              
+                                    </div>                                        
+                                {% endif %}                                       
+                            </div>                                                
+                        </div>                                                    
+                                                                                  
+                        <!-- Last Name -->                                        
+                        <div class="col-md-6">                                    
+                            <div class="form-floating">                           
+                                {{ register_user_form.last_name(class="form-      
+  control" + (" is-invalid" if register_user_form.last_name.errors else "")) }}   
+                                {{ register_user_form.last_name.label(class="form-
+  label") }}                                                                      
+                                {% if register_user_form.last_name.errors %}      
+                                    <div class="invalid-feedback">                
+                                        {% for error in register_user_form.       
+  last_name.errors %}                                                             
+                                            <div>{{ error }}</div>                
+                                        {% endfor %}                              
+                                    </div>                                        
+                                {% endif %}                                       
+                            </div>                                                
+                        </div>                                                    
+                    </div>                                                        
+                                                                                  
+                    <!-- Email -->                                                
+                    <div class="form-floating">                                   
+                        {{ register_user_form.email(class="form-control" + (" is- 
+  invalid" if register_user_form.email.errors else ""), placeholder="name@example.
+  com") }}                                                                        
+                        {{ register_user_form.email.label(class="form-label") }}  
+                        {% if register_user_form.email.errors %}                  
+                            <div class="invalid-feedback">                        
+                                {% for error in register_user_form.email.errors %}
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- Phone Number -->                                         
+                    <div class="form-floating">                                   
+                        {{ register_user_form.phone_number(class="form-control" + 
+  (" is-invalid" if register_user_form.phone_number.errors else ""),              
+  placeholder="Phone Number (Optional)") }}                                       
+                        {{ register_user_form.phone_number.label(class="form-     
+  label") }}                                                                      
+                        {% if register_user_form.phone_number.errors %}           
+                            <div class="invalid-feedback">                        
+                                {% for error in register_user_form.phone_number.  
+  errors %}                                                                       
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- County Selection -->                                     
+                    <div class="mb-3">                                            
+                        {{ register_user_form.county_id.label(class="form-label fw-
+  bold") }}                                                                       
+                        {{ register_user_form.county_id(class="form-select form-  
+  select-lg" + (" is-invalid" if register_user_form.county_id.errors else "")) }} 
+                        {% if register_user_form.county_id.errors %}              
+                            <div class="invalid-feedback">                        
+                                {% for error in register_user_form.county_id.     
+  errors %}                                                                       
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                        <div class="form-text">                                   
+                            <i class="fas fa-info-circle me-1"></i>               
+                            Select the county where you reside or work            
+                        </div>                                                    
+                    </div>                                                        
+                                                                                  
+                    <!-- Password -->                                             
+                    <div class="form-floating">                                   
+                        {{ register_user_form.password(class="form-control" + ("  
+  is-invalid" if register_user_form.password.errors else ""),                     
+  placeholder="Password") }}                                                      
+                        {{ register_user_form.password.label(class="form-label")  
+  }}                                                                              
+                        {% if register_user_form.password.errors %}               
+                            <div class="invalid-feedback">                        
+                                {% for error in register_user_form.password.errors
+  %}                                                                              
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- Password Confirmation -->                                
+                    <div class="form-floating">                                   
+                        {{ register_user_form.password_confirm(class="form-       
+  control" + (" is-invalid" if register_user_form.password_confirm.errors else ""),
+  placeholder="Confirm Password") }}                                              
+                        {{ register_user_form.password_confirm.label(class="form- 
+  label") }}                                                                      
+                        {% if register_user_form.password_confirm.errors %}       
+                            <div class="invalid-feedback">                        
+                                {% for error in register_user_form.               
+  password_confirm.errors %}                                                      
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- Submit Button -->                                        
+                    <div class="d-grid gap-2 mt-4">                               
+                        {{ register_user_form.submit(class="btn btn-primary btn-  
+  lg") }}                                                                         
+                    </div>                                                        
+                </form>                                                           
+                                                                                  
+                <div class="footer-links">                                        
+                    <a href="{{ url_for_security('login') }}">                    
+                        <i class="fas fa-sign-in-alt me-1"></i>                   
+                        Already have an account? Sign In                          
+                    </a>                                                          
+                </div>                                                            
+            </div>                                                                
+        </div>                                                                    
+    </div>                                                                        
+    {% endblock %}                                                                
+                                                                                  
+    {% block extra_js %}                                                          
+    <script>                                                                      
+    // Add some interactive enhancements                                          
+    document.addEventListener('DOMContentLoaded', function() {                    
+        // Auto-focus first empty field                                           
+        const firstEmptyField = document.querySelector('.form-control:not([value])');                                                         
+        if (firstEmptyField) {                                                    
+            firstEmptyField.focus();                                              
+        }                                                                         
+                                                                                  
+        // County selection enhancement                                           
+        const countySelect = document.getElementById('county_id');                
+        if (countySelect) {                                                       
+            countySelect.addEventListener('change', function() {                  
+                if (this.value !== '0') {                                         
+                    this.classList.remove('is-invalid');                          
+                    this.classList.add('is-valid');                               
+                }                                                                 
+            });                                                                   
+        }                                                                         
+                                                                                  
+        // Form validation feedback                                               
+        const form = document.querySelector('form');                              
+        form.addEventListener('submit', function(e) {                             
+            const requiredFields = form.querySelectorAll('[required]');           
+            let isValid = true;                                                   
+                                                                                  
+            requiredFields.forEach(field => {                                     
+                if (!field.value.trim()) {                                        
+                    field.classList.add('is-invalid');                            
+                    isValid = false;                                              
+                } else {                                                          
+                    field.classList.remove('is-invalid');                         
+                }                                                                 
+            });                                                                   
+                                                                                  
+            if (!isValid) {                                                       
+                e.preventDefault();                                               
+                // Show error message                                             
+                const firstInvalid = form.querySelector('.is-invalid');           
+                if (firstInvalid) {                                               
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block:      
+  'center' });                                                                    
+                    firstInvalid.focus();                                         
+                }                                                                 
+            }                                                                     
+        });                                                                       
+    });                                                                           
+    </script>                                                                     
+    {% endblock %}

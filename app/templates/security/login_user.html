@@ -1,0 +1,135 @@
+{% extends "base.html" %}                                                     
+                                                                                  
+    {% block title %}Sign In - County Services Portal{% endblock %}               
+                                                                                  
+    {% block content %}                                                           
+    <div class="auth-container">                                                  
+        <div class="auth-card">                                                   
+            <div class="auth-header">                                             
+                <i class="fas fa-sign-in-alt fa-2x mb-3"></i>                     
+                <h1>Welcome Back</h1>                                             
+                <p>Sign in to access your county services</p>                     
+            </div>                                                                
+                                                                                  
+            <div class="auth-body">                                               
+                <!-- Display flash messages -->                                   
+                {% with messages = get_flashed_messages(with_categories=true) %}  
+                    {% if messages %}                                             
+                        {% for category, message in messages %}                   
+                            <div class="alert alert-{{ 'danger' if category ==    
+  'error' else category }} alert-dismissible fade show">                          
+                                <i class="fas fa-{{ 'exclamation-triangle' if     
+  category == 'error' else 'check-circle' if category == 'success' else 'info-    
+  circle' }} me-2"></i>                                                           
+                                {{ message }}                                     
+                                <button type="button" class="btn-close" data-bs-  
+  dismiss="alert"></button>                                                       
+                            </div>                                                
+                        {% endfor %}                                              
+                    {% endif %}                                                   
+                {% endwith %}                                                     
+                                                                                  
+                <form method="POST" action="{{ url_for_security('login') }}"      
+  novalidate>                                                                     
+                    {{ login_user_form.hidden_tag() }}                            
+                                                                                  
+                    <!-- Email -->                                                
+                    <div class="form-floating">                                   
+                        {{ login_user_form.email(class="form-control form-control-
+  lg" + (" is-invalid" if login_user_form.email.errors else ""),                  
+  placeholder="name@example.com", autofocus=true) }}                              
+                        {{ login_user_form.email.label(class="form-label") }}     
+                        {% if login_user_form.email.errors %}                     
+                            <div class="invalid-feedback">                        
+                                {% for error in login_user_form.email.errors %}   
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- Password -->                                             
+                    <div class="form-floating">                                   
+                        {{ login_user_form.password(class="form-control form-     
+  control-lg" + (" is-invalid" if login_user_form.password.errors else ""),       
+  placeholder="Password") }}                                                      
+                        {{ login_user_form.password.label(class="form-label") }}  
+                        {% if login_user_form.password.errors %}                  
+                            <div class="invalid-feedback">                        
+                                {% for error in login_user_form.password.errors %}
+                                    <div>{{ error }}</div>                        
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% endif %}                                               
+                    </div>                                                        
+                                                                                  
+                    <!-- Remember Me -->                                          
+                    <div class="form-check mb-3">                                 
+                        {{ login_user_form.remember(class="form-check-input") }}  
+                        {{ login_user_form.remember.label(class="form-check-      
+  label") }}                                                                      
+                    </div>                                                        
+                                                                                  
+                    <!-- Submit Button -->                                        
+                    <div class="d-grid gap-2">                                    
+                        {{ login_user_form.submit(class="btn btn-primary btn-lg") 
+  }}                                                                              
+                    </div>                                                        
+                </form>                                                           
+                                                                                  
+                <div class="footer-links">                                        
+                    <a href="{{ url_for_security('forgot_password') }}">          
+                        <i class="fas fa-key me-1"></i>                           
+                        Forgot Password?                                          
+                    </a>                                                          
+                    |                                                             
+                    <a href="{{ url_for_security('register') }}">                 
+                        <i class="fas fa-user-plus me-1"></i>                     
+                        Create Account                                            
+                    </a>                                                          
+                </div>                                                            
+            </div>                                                                
+        </div>                                                                    
+    </div>                                                                        
+    {% endblock %}                                                                
+                                                                                  
+    {% block extra_js %}                                                          
+    <script>                                                                      
+    document.addEventListener('DOMContentLoaded', function() {                    
+        // Enhanced form interaction                                              
+        const emailField = document.getElementById('email');                      
+        const passwordField = document.getElementById('password');                
+                                                                                  
+        // Auto-complete enhancements                                             
+        if (emailField) {                                                         
+            emailField.addEventListener('blur', function() {                      
+                if (this.value && this.checkValidity()) {                         
+                    this.classList.add('is-valid');                               
+                    this.classList.remove('is-invalid');                          
+                }                                                                 
+            });                                                                   
+        }                                                                         
+                                                                                  
+        // Caps lock detection                                                    
+        if (passwordField) {                                                      
+            passwordField.addEventListener('keydown', function(e) {               
+                const capsLock = e.getModifierState && e.                         
+  getModifierState('CapsLock');                                                   
+                const warning = document.getElementById('caps-warning');          
+                                                                                  
+                if (capsLock) {                                                   
+                    if (!warning) {                                               
+                        const warningDiv = document.createElement('div');         
+                        warningDiv.id = 'caps-warning';                           
+                        warningDiv.className = 'alert alert-warning alert-sm mt-2';
+                        warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Caps Lock is on';                                           
+                        this.parentNode.appendChild(warningDiv);                  
+                    }                                                             
+                } else if (warning) {                                             
+                    warning.remove();                                             
+                }                                                                 
+            });                                                                   
+        }                                                                         
+    });                                                                           
+    </script>                                                                     
+    {% endblock %}
