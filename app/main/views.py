@@ -31,11 +31,14 @@ def dashboard():
         return redirect(url_for('main_bp.citizen_dashboard'))                 
     else:                                                                     
         return redirect(url_for('main_bp.guest_dashboard'))
+    
+    
+@main_bp.route('/guest-dashboard')
+def guest_dashboard():
+    return render_template('main/guest_dashboard.html')
+
         
-        
-        
-        
-        
+         
 @main_bp.route('/admin-dashboard')                                            
 @login_required                                                               
 @roles_required(UserRoles.SUPER_ADMIN)                                        
