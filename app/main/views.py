@@ -71,26 +71,7 @@ def admin_dashboard():
                             role_stats=role_stats,                               
                             county_stats=county_stats)
     
-
-
-@main_bp.route('/staff-dashboard')                                            
-@login_required                                                               
-@roles_required(UserRoles.STAFF)                                              
-def staff_dashboard():                                                        
-    """Staff Dashboard - for county staff members"""                          
-    if not current_user.county:                                               
-        flash('Your account is not assigned to a county. Please contact an administrator.', 'warning')                                                     
-        return redirect(url_for('main_bp.index'))                             
-                                                                                
-    # Get county-specific data                                                
-    county = current_user.county                                              
-    county_users = county.users.filter(User.id != current_user.id).all()      
-    departments = county.departments.all()                                    
-                                                                                
-    return render_template('main/staff_dashboard.html',                       
-                            county=county,                                       
-                            county_users=county_users,                           
-                            departments=departments)                             
+                        
                                                                                 
 @main_bp.route('/citizen-dashboard')                                          
 @login_required                                                               
@@ -106,14 +87,36 @@ def citizen_dashboard():
                                                                                 
     return render_template('main/citizen_dashboard.html',                     
                             county=county,                                       
-                            departments=departments)                             
+                            departments=departments)  
+                               
                                                                                 
-@main_bp.route('/guest-dashboard')                                            
+@main_bp.route('/staff-dashboard')                                            
 @login_required                                                               
-@roles_required(UserRoles.GUEST)                                              
-def guest_dashboard():                                                        
-    """Guest Dashboard - limited access"""                                    
-    return render_template('main/guest_dashboard.html') 
+@roles_required(UserRoles.STAFF)                                              
+def staff_dashboard():                                                        
+    """Staff Dashboard - for county staff members"""                          
+    if not current_user.county:                                               
+        flash('Your account is not assigned to a county. Please contact an administrator.', 'warning')                                                     
+        return redirect(url_for('main_bp.index'))                             
+                                                                                  
+    # Get county-specific data                                                
+    county = current_user.county                                              
+    county_users = county.users.filter(User.id != current_user.id).all()      
+    departments = county.departments.all()
+    # TODO : ***************************students dont have these stats
+    # Create stats object with default values for the template
+    stats = {
+        'pending_applications': 0,
+        'in_review': 0,
+        'completed': 0,
+        'citizens': county.users.filter(User.roles.any(Role.name == UserRoles.CITIZEN)).count()
+    }
+        #  **********************************ends here************                                                                   # 
+    return render_template('main/staff_dashboard.html',                       
+                        county=county,                                       
+                        county_users=county_users,                           
+                        departments=departments,
+                        stats=stats)      #add stats to the template context 
 
 
                                                                                   
