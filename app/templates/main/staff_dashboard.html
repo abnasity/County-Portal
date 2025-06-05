@@ -30,7 +30,7 @@
         <div class="card stat-card">
             <div class="card-body text-center">
                 <i class="fas fa-file-alt fa-2x mb-2 text-white"></i>
-               
+                  <h3 class="mb-1 text-white">{{ stats.pending_applications or 0 }}</h3>
 
                 <p class="mb-0 text-white-50">Pending Applications</p>
             </div>
@@ -40,7 +40,7 @@
         <div class="card stat-card">
             <div class="card-body text-center">
                 <i class="fas fa-clock fa-2x mb-2 text-white"></i>
-                
+                  <h3 class="mb-1 text-white">{{ stats.in_review or 0 }}</h3>
                 <p class="mb-0 text-white-50">In Review</p>
             </div>
         </div>
@@ -49,6 +49,7 @@
         <div class="card stat-card">
             <div class="card-body text-center">
                 <i class="fas fa-check-circle fa-2x mb-2 text-white"></i>
+                 <h3 class="mb-1 text-white">{{ stats.completed or 0 }}</h3>
                 
                 <p class="mb-0 text-white-50">Completed</p>
             </div>
@@ -58,7 +59,7 @@
         <div class="card stat-card">
             <div class="card-body text-center">
                 <i class="fas fa-users fa-2x mb-2 text-white"></i>
-                
+                <h3 class="mb-1 text-white">{{ stats.citizens or 0 }}</h3>
                 <p class="mb-0 text-white-50">Citizens Served</p>
             </div>
         </div>
