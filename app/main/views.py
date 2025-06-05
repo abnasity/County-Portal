@@ -113,7 +113,9 @@ def citizen_dashboard():
 @roles_required(UserRoles.GUEST)                                              
 def guest_dashboard():                                                        
     """Guest Dashboard - limited access"""                                    
-    return render_template('main/guest_dashboard.html')                       
+    return render_template('main/guest_dashboard.html') 
+
+
                                                                                   
 @main_bp.route('/about')                                                      
 def about():                                                                  
