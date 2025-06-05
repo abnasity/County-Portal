@@ -17,7 +17,7 @@ class County(db.Model):
                                                                                   
         def _repr_(self):                                                       
             return f'<County {self.name}>'                                        
-                                                                                  
+                                                                        
         @property                                                                 
         def active_departments(self):                                             
             """Get active departments for this county"""                          
