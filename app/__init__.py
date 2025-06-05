@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
-from app.extensions import db, migrate, mail, security
+from app.extensions import db, migrate, mail, security, csrf
 from config import Config
 
 
@@ -10,6 +10,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+    csrf.init_app(app)
 
     # Blueprint imports
     from app.main.views import main_bp
@@ -36,7 +37,7 @@ def create_app():
     def user_registered_signhandler(sender, user, confirm_token, **extra):
         """Handle post-registration logic"""
         # Assign default 'citizen' role
-        default_role = Role.query.filter_by(name='Citizen').first()           
+        default_role = Role.query.filter_by(name='citizen').first()           
         if default_role and not user.roles:                                   
                 user.roles.append(default_role)                                   
                 db.session.commit()                                               
