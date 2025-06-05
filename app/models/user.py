@@ -24,11 +24,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(200), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    # UPDATED
-    def get_primary_role(self):
-        if self.roles:
-            return self.roles[0].name.replace('_', ' ').title()
-        return "No Role Assigned"
+   
     
     
     # Account status fields
@@ -73,3 +69,13 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         role_names = [role.name for role in self.roles]
         return f'User: {self.email}> Roles: {role_names}'
+
+    def get_primary_role(self):
+            """Returns the primary role of the user"""
+            if self.roles:
+                # Return the first role, or 'citizen' if it exists
+                citizen_role = next((role for role in self.roles if role.name == 'citizen'), None)
+                if citizen_role:
+                    return citizen_role.name
+                return self.roles[0].name
+            return 'No Role'
