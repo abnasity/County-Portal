@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - County Services Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="py-5">
+                <h1 class="display-4 fw-bold text-white mb-4">
+                    Welcome to County Services Portal
+                </h1>
+                <p class="lead text-white-50 mb-5">
+                    Access county services, apply for permits, and track your applications online.
+                    Streamlined processes for citizens, efficient management for officials.
+                </p>
+                
+                {% if current_user.is_authenticated %}
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{{ url_for('main_bp.dashboard') }}" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                        </a>
+                        <a href="{{ url_for('main_bp.about') }}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{{ url_for_security('login') }}" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                        <a href="{{ url_for_security('register') }}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <div class="row g-4 mt-5">
+                    <div class="col-md-4">
+                        <div class="bg-white bg-opacity-10 rounded-3 p-4">
+                            <i class="fas fa-file-alt fa-2x text-white mb-3"></i>
+                            <h5 class="text-white">Apply Online</h5>
+                            <p class="text-white-50 small">Submit permit applications from anywhere, anytime</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-white bg-opacity-10 rounded-3 p-4">
+                            <i class="fas fa-search fa-2x text-white mb-3"></i>
+                            <h5 class="text-white">Track Progress</h5>
+                            <p class="text-white-50 small">Monitor your application status in real-time</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-white bg-opacity-10 rounded-3 p-4">
+                            <i class="fas fa-clock fa-2x text-white mb-3"></i>
+                            <h5 class="text-white">Fast Processing</h5>
+                            <p class="text-white-50 small">Streamlined approval process for quick turnaround</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if not current_user.is_authenticated %}
+                <div class="row g-4 mt-4">
+                    <div class="col-12">
+                        <div class="bg-white bg-opacity-10 rounded-3 p-4">
+                            <h5 class="text-white mb-3">Available Counties</h5>
+                            <div class="row">
+                                {% for county in counties %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="badge bg-light text-dark p-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ county.name }} ({{ county.code }})
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
