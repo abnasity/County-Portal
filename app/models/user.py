@@ -9,7 +9,7 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
-        return f'<Role {self.name}>'
+        return f'Role: {self.name}>'
 
 
 
@@ -24,6 +24,14 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(200), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    # UPDATED
+    def get_primary_role(self):
+        if self.roles:
+            return self.roles[0].name.replace('_', ' ').title()
+        return "No Role Assigned"
+    
+    
+    # Account status fields
     active = db.Column(db.Boolean(), default=True)
     confirmed_at = db.Column(db.DateTime())
     created_at = db.Column(db.DateTime(), nullable=False, default=db.func.current_timestamp())
@@ -64,4 +72,4 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         role_names = [role.name for role in self.roles]
-        return f'<User {self.email}> Roles: {role_names}'
+        return f'User: {self.email}> Roles: {role_names}'
