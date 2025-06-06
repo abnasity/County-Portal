@@ -1,0 +1,122 @@
+{% extends "base.html" %}                                                     
+                                                                                  
+    {% block title %}Review Application - {{ application.application_number }}{% endblock %}                                                                     
+                                                                                  
+    {% block content %}                                                           
+    <div class="container-fluid">                                                 
+        <!-- Header -->                                                           
+        <div class="d-flex justify-content-between align-items-center mb-4">      
+            <div>                                                                 
+                <h3>                                                              
+                    <i class="fas fa-clipboard-check text-primary me-2"></i>      
+                    Review Application {{ application.application_number }}       
+                </h3>                                                             
+                <p class="text-muted mb-0">                                       
+                    Submitted by {{ application.applicant.full_name() }} on {{ application.submitted_at.strftime('%B %d, %Y') }}                               
+                </p>                                                              
+            </div>                                                                
+            <a href="{{ url_for('main_bp.permit_detail', permit_id=application.id) }}" class="btn btn-outline-secondary">                                          
+                <i class="fas fa-arrow-left me-1"></i>Back to Details             
+            </a>                                                                  
+        </div>                                                                    
+                                                                                  
+        <div class="row">                                                         
+            <!-- Review Form -->                                                  
+            <div class="col-md-6">                                                
+                <div class="card">                                                
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">                              
+                            <i class="fas fa-edit me-2"></i>                      
+                            Review Decision                                       
+                        </h5>                                                     
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        <form method="POST">                                      
+                            {{ form.hidden_tag() }}                               
+                                                                                  
+                            <div class="mb-3">                                    
+                                {{ form.status.label(class="form-label fw-bold") }}                                                                              
+                                {{ form.status(class="form-select") }}            
+                                {% if form.status.errors %}                       
+                                    <div class="text-danger small">               
+                                        {% for error in form.status.errors %}     
+                                            {{ error }}                           
+                                        {% endfor %}                              
+                                    </div>                                        
+                                {% endif %}                                       
+                            </div>                                                
+                                                                                  
+                            <div class="mb-3">                                    
+                                {{ form.priority.label(class="form-label fw-bold") }}                                                                              
+                                {{ form.priority(class="form-select") }}          
+                            </div>                                                
+                                                                                  
+                            <div class="mb-4">                                    
+                                {{ form.officer_comments.label(class="form-label fw-bold") }}                                                                    
+                                {{ form.officer_comments(class="form-control") }} 
+                                {% if form.officer_comments.errors %}             
+                                    <div class="text-danger small">               
+                                        {% for error in form.officer_comments.errors %}                                                                       
+                                            {{ error }}                           
+                                        {% endfor %}                              
+                                    </div>                                        
+                                {% endif %}                                       
+                            </div>                                                
+                                                                                  
+                            <div class="d-grid gap-2">                            
+                                <button type="submit" class="btn btn-primary">    
+                                    <i class="fas fa-save me-1"></i>Submit Review 
+                                </button>                                         
+                            </div>                                                
+                        </form>                                                   
+                    </div>                                                        
+                </div>                                                            
+            </div>                                                                
+                                                                                  
+            <!-- Application Summary -->                                          
+            <div class="col-md-6">                                                
+                <div class="card">                                                
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">Application Summary</h5>      
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        <dl class="row">                                          
+                            <dt class="col-sm-5">Permit Type:</dt>                
+                            <dd class="col-sm-7">{{ application.permit_type.name }}</dd>                                                                         
+                                                                                  
+                            <dt class="col-sm-5">Business Name:</dt>              
+                            <dd class="col-sm-7">{{ application.business_name }}</dd>                                                                         
+                                                                                  
+                            <dt class="col-sm-5">Processing Fee:</dt>             
+                            <dd class="col-sm-7">KSh {{ application.permit_type.processing_fee or '0.00' }}</dd>                                                
+                                                                                  
+                            <dt class="col-sm-5">Days Since Submission:</dt>      
+                            <dd class="col-sm-7">{{ application.days_since_submission }} days</dd>                                              
+                                                                                  
+                            <dt class="col-sm-5">Expected Processing:</dt>        
+                            <dd class="col-sm-7">{{ application.permit_type.processing_days }} days</dd>                                                    
+                        </dl>                                                     
+                                                                                  
+                        {% if application.is_overdue %}                           
+                        <div class="alert alert-warning">                         
+                            <i class="fas fa-exclamation-triangle me-2"></i>      
+                            This application is overdue by {{ application.days_since_submission - application.permit_type.processing_days }} days.        
+                        </div>                                                    
+                        {% endif %}                                               
+                                                                                  
+                        {% if application.permit_type.required_documents_list %}  
+                        <div class="mt-3">                                        
+                            <strong>Required Documents:</strong>                  
+                            <ul class="list-unstyled mt-2">                       
+                                {% for doc in application.permit_type.required_documents_list %}                                                      
+                                <li><i class="fas fa-file me-2"></i>{{ doc }}</li>
+                                {% endfor %}                                      
+                            </ul>                                                 
+                        </div>                                                    
+                        {% endif %}                                               
+                    </div>                                                        
+                </div>                                                            
+            </div>                                                                
+        </div>                                                                    
+    </div>                                                                        
+    {% endblock %}
