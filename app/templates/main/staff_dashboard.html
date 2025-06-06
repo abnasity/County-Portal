@@ -3,6 +3,66 @@
 {% block title %}Staff Dashboard - County Portal{% endblock %}
 
 {% block content %}
+
+
+<style>                                                                       
+    /* Custom styles for staff dashboard */                                       
+    .table-hover tbody tr:hover {                                                 
+        background-color: rgba(0, 123, 255, 0.05);                                
+    }                                                                             
+                                                                                  
+    .application-checkbox {                                                       
+        cursor: pointer;                                                          
+    }                                                                             
+                                                                                  
+    .btn-group-sm .btn {                                                          
+        padding: 0.25rem 0.5rem;                                                  
+        font-size: 0.875rem;                                                      
+    }                                                                             
+                                                                                  
+    .badge {                                                                      
+        font-size: 0.75rem;                                                       
+    }                                                                             
+                                                                                  
+    @media (max-width: 768px) {                                                   
+        .card-header .d-flex {                                                    
+            flex-direction: column;                                               
+            gap: 1rem;                                                            
+        }                                                                         
+                                                                                  
+        .input-group {                                                            
+            width: 100% !important;                                               
+        }                                                                         
+                                                                                  
+        .btn-group-sm {                                                           
+            display: flex;                                                        
+            flex-direction: column;                                               
+        }                                                                         
+    }                                                                             
+                                                                                  
+    /* Animation for new notifications */                                         
+    @keyframes slideInRight {                                                     
+        from {                                                                    
+            transform: translateX(100%);                                          
+            opacity: 0;                                                           
+        }                                                                         
+        to {                                                                      
+            transform: translateX(0);                                             
+            opacity: 1;                                                           
+        }                                                                         
+    }                                                                             
+                                                                                  
+    .alert.position-fixed {                                                       
+        animation: slideInRight 0.3s ease-out;                                    
+        max-width: 350px;                                                         
+    }                                                                             
+    </style>
+
+
+
+
+
+
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -25,159 +85,416 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <div class="card-body text-center">
-                <i class="fas fa-file-alt fa-2x mb-2 text-white"></i>
-                  <h3 class="mb-1 text-white">{{ stats.pending_applications or 0 }}</h3>
 
-                <p class="mb-0 text-white-50">Pending Applications</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <div class="card-body text-center">
-                <i class="fas fa-clock fa-2x mb-2 text-white"></i>
-                  <h3 class="mb-1 text-white">{{ stats.in_review or 0 }}</h3>
-                <p class="mb-0 text-white-50">In Review</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <div class="card-body text-center">
-                <i class="fas fa-check-circle fa-2x mb-2 text-white"></i>
-                 <h3 class="mb-1 text-white">{{ stats.completed or 0 }}</h3>
-                
-                <p class="mb-0 text-white-50">Completed</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card stat-card">
-            <div class="card-body text-center">
-                <i class="fas fa-users fa-2x mb-2 text-white"></i>
-                <h3 class="mb-1 text-white">{{ stats.citizens or 0 }}</h3>
-                <p class="mb-0 text-white-50">Citizens Served</p>
-            </div>
-        </div>
-    </div>
+
+
+<!-- Permit Management Section -->                                            
+<div class="row mb-4">                                                        
+    <div class="col-12">                                                      
+        <h4>                                                                  
+            <i class="fas fa-clipboard-check text-primary me-2"></i>          
+            Permit Applications Management                                    
+        </h4>                                                                 
+        <p class="text-muted">Review and process permit applications for {{ current_user.department.name }}</p>                                             
+    </div>                                                                    
+</div>                                                                        
+                                                                              
+<!-- Statistics Cards -->                                                     
+<div class="row g-3 mb-4">                                                    
+    <div class="col-lg-3 col-md-6">                                           
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-body text-center">                               
+                <div class="d-flex align-items-center justify-content-center mb-2">                                                                          
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3"> 
+                        <i class="fas fa-file-alt fa-2x text-primary"></i>    
+                    </div>                                                    
+                </div>                                                        
+                <h3 class="mb-1 fw-bold">{{ stats.total_applications }}</h3>  
+                <p class="text-muted mb-0">Total Applications</p>             
+                <small class="text-success">                                  
+                    <i class="fas fa-arrow-up me-1"></i>All time              
+                </small>                                                      
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+                                                                              
+    <div class="col-lg-3 col-md-6">                                           
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-body text-center">                               
+                <div class="d-flex align-items-center justify-content-center mb-2">                                                                          
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3"> 
+                        <i class="fas fa-clock fa-2x text-warning"></i>       
+                    </div>                                                    
+                </div>                                                        
+                <h3 class="mb-1 fw-bold text-warning">{{ stats.pending_review }}</h3>                                                                         
+                <p class="text-muted mb-0">Pending Review</p>                 
+                <small class="text-warning">                                  
+                    <i class="fas fa-exclamation-circle me-1"></i>Needs attention                                                                       
+                </small>                                                      
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+                                                                              
+    <div class="col-lg-3 col-md-6">                                           
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-body text-center">                               
+                <div class="d-flex align-items-center justify-content-center mb-2">                                                                          
+                    <div class="rounded-circle bg-info bg-opacity-10 p-3">    
+                        <i class="fas fa-search fa-2x text-info"></i>         
+                    </div>                                                    
+                </div>                                                        
+                <h3 class="mb-1 fw-bold text-info">{{ stats.under_review }}</h3>                                                                         
+                <p class="text-muted mb-0">Under Review</p>                   
+                <small class="text-info">                                     
+                    <i class="fas fa-spinner me-1"></i>In progress            
+                </small>                                                      
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+                                                                              
+    <div class="col-lg-3 col-md-6">                                           
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-body text-center">                               
+                <div class="d-flex align-items-center justify-content-center mb-2">                                                                          
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3"> 
+                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                    </div>                                                    
+                </div>                                                        
+                <h3 class="mb-1 fw-bold text-success">{{ stats.completed }}</h3>                                                                         
+                <p class="text-muted mb-0">Completed</p>                      
+                <small class="text-success">                                  
+                    <i class="fas fa-check me-1"></i>Processed                
+                </small>                                                      
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+</div>                                                                        
+                                                                              
+<!-- Quick Actions -->                                                        
+<div class="row mb-4">                                                        
+    <div class="col-12">                                                      
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-header bg-transparent border-0 pb-0">            
+                <h5 class="card-title mb-0">                                  
+                    <i class="fas fa-bolt text-warning me-2"></i>             
+                    Quick Actions                                             
+                </h5>                                                         
+            </div>                                                            
+            <div class="card-body pt-2">                                      
+                <div class="row g-3">                                         
+                    <div class="col-md-3">                                    
+                        <a href="{{ url_for('main_bp.staff_dashboard') }}?filter=pending"                                                              
+                           class="btn btn-outline-warning w-100">             
+                            <i class="fas fa-clock me-2"></i>                 
+                            Review Pending                                    
+                            {% if stats.pending_review > 0 %}                 
+                                <span class="badge bg-warning ms-2">{{ stats.pending_review }}</span>                                                        
+                            {% endif %}                                       
+                        </a>                                                  
+                    </div>                                                    
+                    <div class="col-md-3">                                    
+                        <a href="{{ url_for('main_bp.staff_dashboard') }}?filter=overdue"                                                              
+                           class="btn btn-outline-danger w-100">              
+                            <i class="fas fa-exclamation-triangle me-2"></i>  
+                            Overdue Items                                     
+                        </a>                                                  
+                    </div>                                                    
+                    <div class="col-md-3">                                    
+                        <button class="btn btn-outline-info w-100" data-bs-toggle="modal" data-bs-target="#bulkActionModal">                               
+                            <i class="fas fa-tasks me-2"></i>                 
+                            Bulk Actions                                      
+                        </button>                                             
+                    </div>                                                    
+                    <div class="col-md-3">                                    
+                        <a href="{{ url_for('main_bp.staff_dashboard') }}?export=csv"                                                                  
+                           class="btn btn-outline-secondary w-100">           
+                            <i class="fas fa-download me-2"></i>              
+                            Export Report                                     
+                        </a>                                                  
+                    </div>                                                    
+                </div>                                                        
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+</div>                                                                        
+                                                                              
+<!-- Applications Table -->                                                   
+<div class="row">                                                             
+    <div class="col-12">                                                      
+        <div class="card border-0 shadow-sm">                                 
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">                                            
+                <h5 class="card-title mb-0">                                  
+                    <i class="fas fa-list me-2"></i>                          
+                    Recent Applications                                       
+                </h5>                                                         
+                <div class="d-flex gap-2">                                    
+                    <!-- Filter Dropdown -->                                  
+                    <div class="dropdown">                                    
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle"                                                                
+                                type="button" data-bs-toggle="dropdown">      
+                            <i class="fas fa-filter me-1"></i>Filter          
+                        </button>                                             
+                        <ul class="dropdown-menu">                            
+                            <li><a class="dropdown-item" href="?filter=all">All Applications</a></li>                                    
+                            <li><a class="dropdown-item" href="?filter=pending">Pending Review</a></li>                                  
+                            <li><a class="dropdown-item" href="?filter=review">Under Review</a></li>                                     
+                            <li><a class="dropdown-item" href="?filter=approved">Approved</a></li>                                       
+                            <li><a class="dropdown-item" href="?filter=rejected">Rejected</a></li>                                       
+                            <li><hr class="dropdown-divider"></li>            
+                            <li><a class="dropdown-item" href="?filter=overdue">Overdue</a></li>                                         
+                            <li><a class="dropdown-item" href="?filter=urgent">Urgent</a></li>                                           
+                        </ul>                                                 
+                    </div>                                                    
+                                                                              
+                    <!-- Search -->                                           
+                    <div class="input-group input-group-sm" style="width: 250px;">                                                                        
+                        <input type="text" class="form-control" placeholder="Search applications..."                                            
+                               id="searchInput" onkeyup="searchTable()">      
+                        <button class="btn btn-outline-secondary" type="button">                                                                  
+                            <i class="fas fa-search"></i>                     
+                        </button>                                             
+                    </div>                                                    
+                </div>                                                        
+            </div>                                                            
+            <div class="card-body p-0">                                       
+                {% if applications %}                                         
+                <div class="table-responsive">                                
+                    <table class="table table-hover mb-0" id="applicationsTable">                                                         
+                        <thead class="table-light">                           
+                            <tr>                                              
+                                <th class="border-0">                         
+                                    <input type="checkbox" class="form-check-input" id="selectAll"                                                           
+                                           onchange="toggleSelectAll()">      
+                                </th>                                         
+                                <th class="border-0">Application #</th>       
+                                <th class="border-0">Applicant</th>           
+                                <th class="border-0">Permit Type</th>         
+                                <th class="border-0">Business Name</th>       
+                                <th class="border-0">Status</th>              
+                                <th class="border-0">Priority</th>            
+                                <th class="border-0">Submitted</th>           
+                                <th class="border-0">Days</th>                
+                                <th class="border-0 text-end">Actions</th>    
+                            </tr>                                             
+                        </thead>                                              
+                        <tbody>                                               
+                            {% for app in applications %}                     
+                            <tr class="{% if app.is_overdue %}table-warning{% endif %}">                                                                      
+                                <td>                                          
+                                    <input type="checkbox" class="form-check-input application-checkbox"                                                     
+                                           value="{{ app.id }}">              
+                                </td>                                         
+                                <td>                                          
+                                    <code class="text-primary">{{ app.application_number }}</code>                                                    
+                                    {% if app.is_overdue %}                   
+                                        <i class="fas fa-clock text-warning ms-1"                                                              
+                                           title="Overdue by {{ app.days_since_submission - app.permit_type.processing_days }} days"></i>           
+                                    {% endif %}                               
+                                </td>                                         
+                                <td>                                          
+                                    <div class="d-flex align-items-center">   
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2 me-2">                                                       
+                                            <i class="fas fa-user text-secondary" style="font-size: 0.75rem;"></i>                                     
+                                        </div>                                
+                                        <div>                                 
+                                            <div class="fw-medium">{{ app.applicant.full_name() }}</div>                                                  
+                                            <small class="text-muted">{{ app.applicant.email }}</small>                                                      
+                                        </div>                                
+                                    </div>                                    
+                                </td>                                         
+                                <td>                                          
+                                    <span class="badge bg-light text-dark">{{ app.permit_type.name }}</span>                                                  
+                                </td>                                         
+                                <td>                                          
+                                    <strong>{{ app.business_name[:30] }}{% if app.business_name|length > 30 %}...{% endif %}</strong>                         
+                                </td>                                         
+                                <td>                                          
+                                    <span class="badge {{ app.status_badge_class }}">                                                         
+                                        {% if app.status == 'Submitted' %}    
+                                            <i class="fas fa-file me-1"></i>  
+                                        {% elif app.status == 'Under Review' %}                                                                              
+                                            <i class="fas fa-search me-1"></i>
+                                        {% elif app.status == 'Approved' %}   
+                                            <i class="fas fa-check me-1"></i> 
+                                        {% elif app.status == 'Rejected' %}   
+                                            <i class="fas fa-times me-1"></i> 
+                                        {% endif %}                           
+                                        {{ app.status }}                      
+                                    </span>                                   
+                                </td>                                         
+                                <td>                                          
+                                    {% if app.priority == 'Urgent' %}         
+                                        <span class="badge bg-danger">        
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Urgent                                                       
+                                        </span>                               
+                                    {% elif app.priority == 'High' %}         
+                                        <span class="badge bg-warning">       
+                                            <i class="fas fa-exclamation me-1"></i>High                                                                     
+                                        </span>                               
+                                    {% else %}                                
+                                        <span class="badge bg-secondary">Normal</span>                                                        
+                                    {% endif %}                               
+                                </td>                                         
+                                <td>                                          
+                                    <div>{{ app.submitted_at.strftime('%b %d, %Y') }}</div>                                                                   
+                                    <small class="text-muted">{{ app.submitted_at.strftime('%I:%M %p') }}</small>                                    
+                                </td>                                         
+                                <td>                                          
+                                    <span class="{% if app.is_overdue %}text-danger fw-bold{% endif %}">                                                     
+                                        {{ app.days_since_submission }}d      
+                                    </span>                                   
+                                    <small class="text-muted d-block">        
+                                        of {{ app.permit_type.processing_days }}d                                                                             
+                                    </small>                                  
+                                </td>                                         
+                                <td class="text-end">                         
+                                    <div class="btn-group btn-group-sm">      
+                                        <a href="{{ url_for('main_bp.permit_detail', permit_id=app.id) }}"                                           
+                                           class="btn btn-outline-primary" title="View Details">                                                           
+                                            <i class="fas fa-eye"></i>        
+                                        </a>                                  
+                                        {% if app.status == 'Submitted' %}    
+                                            <a href="{{ url_for('main_bp.review_permit', permit_id=app.id) }}"                                           
+                                               class="btn btn-outline-success" title="Review">                                                                 
+                                                <i class="fas fa-edit"></i>   
+                                            </a>                              
+                                        {% endif %}                           
+                                        <div class="dropdown">                
+                                            <button class="btn btn-outline-secondary dropdown-toggle"                                                      
+                                                    type="button" data-bs-toggle="dropdown">                                                              
+                                                <i class="fas fa-ellipsis-v"></i>                                                                         
+                                            </button>                         
+                                            <ul class="dropdown-menu">        
+                                                <li>                          
+                                                    <a class="dropdown-item" href="{{ url_for('main_bp.permit_detail', permit_id=app.id) }}">                
+                                                        <i class="fas fa-eye me-2"></i>View Details                                                          
+                                                    </a>                      
+                                                </li>                         
+                                                {% if app.status in ['Submitted', 'Under Review'] %}                                                
+                                                <li>                          
+                                                    <a class="dropdown-item text-success"                                                                   
+                                                       href="{{ url_for('main_bp.review_permit', permit_id=app.id) }}">                         
+                                                        <i class="fas fa-check me-2"></i>Approve                                                               
+                                                    </a>                      
+                                                </li>                         
+                                                <li>                          
+                                                    <a class="dropdown-item text-danger"                                                                    
+                                                       href="{{ url_for('main_bp.review_permit', permit_id=app.id) }}">                         
+                                                        <i class="fas fa-times me-2"></i>Reject                                                                
+                                                    </a>                      
+                                                </li>                         
+                                                {% endif %}                   
+                                                <li><hr class="dropdown-divider"></li>                                                                  
+                                                <li>                          
+                                                    <a class="dropdown-item" href="#">                                                                       
+                                                        <i class="fas fa-user me-2"></i>Assign to Me                                                          
+                                                    </a>                      
+                                                </li>                         
+                                                <li>                          
+                                                    <a class="dropdown-item" href="#">                                                                       
+                                                        <i class="fas fa-flag me-2"></i>Set Priority                                                          
+                                                    </a>                      
+                                                </li>                         
+                                                <li>                          
+                                                    <a class="dropdown-item" href="#">                                                                       
+                                                        <i class="fas fa-download me-2"></i>Download PDF                                                 
+                                                    </a>                      
+                                                </li>                         
+                                            </ul>                             
+                                        </div>                                
+                                    </div>                                    
+                                </td>                                         
+                            </tr>                                             
+                            {% endfor %}                                      
+                        </tbody>                                              
+                    </table>                                                  
+                </div>                                                        
+                                                                              
+                <!-- Pagination -->                                           
+                <div class="card-footer bg-transparent border-0">             
+                    <div class="d-flex justify-content-between align-items-center">                                                                        
+                        <span class="text-muted small">                       
+                            Showing {{ applications|length }} of {{ stats.total_applications }} applications                                              
+                        </span>                                               
+                        <nav aria-label="Applications pagination">            
+                            <ul class="pagination pagination-sm mb-0">        
+                                <li class="page-item disabled">               
+                                    <span class="page-link">Previous</span>   
+                                </li>                                         
+                                <li class="page-item active">                 
+                                    <span class="page-link">1</span>          
+                                </li>                                         
+                                <li class="page-item disabled">               
+                                    <span class="page-link">Next</span>       
+                                </li>                                         
+                            </ul>                                             
+                        </nav>                                                
+                    </div>                                                    
+                </div>                                                        
+                                                                              
+                {% else %}                                                    
+                <div class="text-center py-5">                                
+                    <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">                                                                             
+                        <i class="fas fa-clipboard-list fa-3x text-muted"></i>
+                    </div>                                                    
+                    <h5 class="mb-2">No Applications Yet</h5>                 
+                    <p class="text-muted mb-3">                               
+                        No permit applications have been submitted to your department yet.                                                                 
+                    </p>                                                      
+                    <div class="d-flex gap-2 justify-content-center">         
+                        <a href="{{ url_for('main_bp.staff_dashboard') }}?refresh=true" class="btn btn-outline-primary">                               
+                            <i class="fas fa-sync-alt me-1"></i>Refresh       
+                        </a>                                                  
+                        <a href="{{ url_for('main_bp.dashboard') }}" class="btn btn-outline-secondary">                                              
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard                                                                       
+                        </a>                                                  
+                    </div>                                                    
+                </div>                                                        
+                {% endif %}                                                   
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
+</div>                                                                        
+                                                                              
+<!-- Bulk Action Modal -->                                                    
+<div class="modal fade" id="bulkActionModal" tabindex="-1">                   
+    <div class="modal-dialog">                                                
+        <div class="modal-content">                                           
+            <div class="modal-header">                                        
+                <h5 class="modal-title">                                      
+                    <i class="fas fa-tasks me-2"></i>Bulk Actions             
+                </h5>                                                         
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>                                                       
+            </div>                                                            
+            <div class="modal-body">                                          
+                <p class="text-muted">Select applications from the table to perform bulk actions.</p>                                                       
+                <div class="d-grid gap-2">                                    
+                    <button class="btn btn-outline-success" onclick="bulkAction('approve')">                                                
+                        <i class="fas fa-check me-2"></i>Approve Selected     
+                    </button>                                                 
+                    <button class="btn btn-outline-danger" onclick="bulkAction('reject')">                                                 
+                        <i class="fas fa-times me-2"></i>Reject Selected      
+                    </button>                                                 
+                    <button class="btn btn-outline-warning" onclick="bulkAction('review')">                                                 
+                        <i class="fas fa-search me-2"></i>Mark Under Review   
+                    </button>                                                 
+                    <button class="btn btn-outline-info" onclick="bulkAction('assign')">                                                 
+                        <i class="fas fa-user me-2"></i>Assign to Me          
+                    </button>                                                 
+                </div>                                                        
+            </div>                                                            
+            <div class="modal-footer">                                        
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>                                                 
+            </div>                                                            
+        </div>                                                                
+    </div>                                                                    
 </div>
 
-<!-- Main Content -->
-<div class="row">
-    <!-- Work Queue -->
-    <div class="col-md-8">
-        <div class="card dashboard-card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-tasks me-2"></i>My Work Queue
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if current_user.department %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    You are assigned to <strong>{{ current_user.department.name }}</strong> department.
-                    Your work queue will appear here when permit applications are submitted.
-                </div>
-                {% else %}
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    You have not been assigned to a department yet. 
-                    Please contact your county administrator to assign you to a department.
-                </div>
-                {% endif %}
-                
-                <!-- Sample work items (will be replaced with real data later) -->
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">Sample Application #001</h6>
-                                <p class="mb-1">Business License Application</p>
-                                <small class="text-muted">Submitted 2 days ago</small>
-                            </div>
-                            <span class="badge bg-warning">Pending Review</span>
-                        </div>
-                    </div>
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">Sample Application #002</h6>
-                                <p class="mb-1">Building Permit Application</p>
-                                <small class="text-muted">Submitted 1 week ago</small>
-                            </div>
-                            <span class="badge bg-info">In Review</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-3">
-                    <button class="btn btn-primary" disabled>
-                        <i class="fas fa-plus me-2"></i>Full permit system coming soon
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Department Info & Quick Actions -->
-    <div class="col-md-4">
-        <!-- Department Information -->
-        <div class="card dashboard-card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-building me-2"></i>Department Info
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if current_user.department %}
-                <h6>{{ current_user.department.name }}</h6>
-                <p class="text-muted small">{{ current_user.department.description or 'Department description not available' }}</p>
-                <hr>
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted">Code:</span>
-                    <strong>{{ current_user.department.code }}</strong>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted">County:</span>
-                    <strong>{{ current_user.county.name }}</strong>
-                </div>
-                {% else %}
-                <p class="text-muted">No department assigned</p>
-                {% endif %}
-            </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="card dashboard-card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-bolt me-2"></i>Quick Actions
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary" disabled>
-                        <i class="fas fa-search me-2"></i>Search Applications
-                    </button>
-                    <button class="btn btn-outline-info" disabled>
-                        <i class="fas fa-chart-bar me-2"></i>Generate Report
-                    </button>
-                    <button class="btn btn-outline-success" disabled>
-                        <i class="fas fa-download me-2"></i>Export Data
-                    </button>
-                    <a href="{{ url_for('auth_bp.profile') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-cog me-2"></i>Update Profile
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
 
 <!-- County Information -->
 {% if current_user.county %}
@@ -217,6 +534,117 @@
 
 {% block scripts %}
 <script>
+
+// Search functionality                                                       
+    function searchTable() {                                                      
+        const input = document.getElementById('searchInput');                     
+        const filter = input.value.toLowerCase();                                 
+        const table = document.getElementById('applicationsTable');               
+        const rows = table.getElementsByTagName('tr');                            
+                                                                                  
+        for (let i = 1; i < rows.length; i++) {                                   
+            const row = rows[i];                                                  
+            const cells = row.getElementsByTagName('td');                         
+            let found = false;                                                    
+                                                                                  
+            for (let j = 0; j < cells.length; j++) {                              
+                const cell = cells[j];                                            
+                if (cell && cell.textContent.toLowerCase().includes(filter)) {    
+                    found = true;                                                 
+                    break;                                                        
+                }                                                                 
+            }                                                                     
+                                                                                  
+            row.style.display = found ? '' : 'none';                              
+        }                                                                         
+    }                                                                             
+                                                                                  
+    // Select all functionality                                                   
+    function toggleSelectAll() {                                                  
+        const selectAll = document.getElementById('selectAll');                   
+        const checkboxes = document.querySelectorAll('.application-checkbox');    
+                                                                                  
+        checkboxes.forEach(checkbox => {                                          
+            checkbox.checked = selectAll.checked;                                 
+        });                                                                       
+    }                                                                             
+                                                                                  
+    // Bulk actions                                                               
+    function bulkAction(action) {                                                 
+        const selectedIds = [];                                                   
+        const checkboxes = document.querySelectorAll('.application-checkbox:checked');                                                             
+                                                                                  
+        checkboxes.forEach(checkbox => {                                          
+            selectedIds.push(checkbox.value);                                     
+        });                                                                       
+                                                                                  
+        if (selectedIds.length === 0) {                                           
+            alert('Please select at least one application.');                     
+            return;                                                               
+        }                                                                         
+                                                                                  
+        // Confirm action                                                         
+        const actionText = {                                                      
+            'approve': 'approve',                                                 
+            'reject': 'reject',                                                   
+            'review': 'mark as under review',                                     
+            'assign': 'assign to yourself'                                        
+        };                                                                        
+                                                                                  
+        if (confirm(`Are you sure you want to ${actionText[action]} ${selectedIds.
+  length} selected application(s)?`)) {                                           
+            // Here you would make an AJAX request to perform the bulk action     
+            console.log(`Performing ${action} on applications:`, selectedIds);    
+                                                                                  
+            // For now, just show a success message                               
+            alert(`Bulk ${action} completed for ${selectedIds.length} applications.
+  `);                                                                             
+            location.reload();                                                    
+        }                                                                         
+    }                                                                             
+                                                                                  
+    // Auto-refresh for new applications                                          
+    setInterval(() => {                                                           
+        // Check for new applications every 30 seconds                            
+        fetch(window.location.href + '?check_new=true')                           
+            .then(response => response.json())                                    
+            .then(data => {                                                       
+                if (data.new_applications > 0) {                                  
+                    // Show notification                                          
+                    const notification = document.createElement('div');           
+                    notification.className = 'alert alert-info alert-dismissible fade show position-fixed';                                                      
+                    notification.style.top = '20px';                              
+                    notification.style.right = '20px';                            
+                    notification.style.zIndex = '9999';                           
+                    notification.innerHTML = `                                    
+                        <i class="fas fa-bell me-2"></i>                          
+                        ${data.new_applications} new application(s) received!     
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>                                                       
+                    `;                                                            
+                    document.body.appendChild(notification);                      
+                                                                                  
+                    // Auto-remove after 5 seconds                                
+                    setTimeout(() => {                                            
+                        if (notification.parentNode) {                            
+                            notification.parentNode.removeChild(notification);    
+                        }                                                         
+                    }, 5000);                                                     
+                }                                                                 
+            })                                                                    
+            .catch(error => console.log('Error checking for updates:', error));   
+    }, 30000);                                                                    
+                                                                                  
+    // Initialize tooltips                                                        
+    document.addEventListener('DOMContentLoaded', function() {                    
+        const tooltipTriggerList = [].slice.call(document.                        
+  querySelectorAll('[title]'));                                                   
+        tooltipTriggerList.map(function (tooltipTriggerEl) {                      
+            return new bootstrap.Tooltip(tooltipTriggerEl);                       
+        });                                                                       
+    });
+
+
+
 // Auto-refresh dashboard every 60 seconds
 setTimeout(() => {
     location.reload();
