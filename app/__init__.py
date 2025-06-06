@@ -2,6 +2,7 @@ from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 from app.extensions import db, migrate, mail, security, csrf
 from config import Config
+import json
 
 
 def create_app():
@@ -25,6 +26,7 @@ def create_app():
     # Import models and setup security
     from app.models.user import User, Role, uuid
     from app.models.county import County, Department
+    from app.models.permit import PermitType, PermitApplication, PermitDocument
     from app.forms import ExtendedLoginForm, ExtendedRegisterForm
     from flask_security import hash_password
     
@@ -92,6 +94,21 @@ def create_app():
                     db.session.add(dept)                                         
                     print(f"Created department: {dept.name} in {county.name}")
                 db.session.commit()
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
 
         # Create roles
         roles_data = [
