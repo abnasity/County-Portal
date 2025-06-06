@@ -1,9 +1,10 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, url_for, request
+from flask import Blueprint, flash, jsonify, redirect, render_template, url_for, request, current_app
 from flask_security import login_required, current_user, roles_required
 from app.models.user import User, Role
 from app.models.county import County, Department
 from app.utils.constants import UserRoles
-from app.extensions import db
+from app.extensions import db, mail
+from flask_mail import Message
 
 
 
@@ -129,10 +130,29 @@ def departments_by_county(county_id):
         for dept in departments                                               
     ])
     
-#
-    
-
+@auth_bp.route('/test-email')
+def test_email():
+    try:
+        # Print configuration for debugging
+        config = {
+            'MAIL_SERVER': current_app.config['MAIL_SERVER'],
+            'MAIL_PORT': current_app.config['MAIL_PORT'],
+            'MAIL_USE_TLS': current_app.config['MAIL_USE_TLS'],
+            'MAIL_USE_SSL': current_app.config['MAIL_USE_SSL'],
+            'MAIL_USERNAME': current_app.config['MAIL_USERNAME'],
+            'MAIL_DEFAULT_SENDER': current_app.config['MAIL_DEFAULT_SENDER'],
+        }
         
-    
-    
-    
+        msg = Message('Test Email',
+                     sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                     recipients=[current_app.config['MAIL_USERNAME']])
+        msg.body = 'This is a test email to verify configuration'
+        mail.send(msg)
+        return f'Email configuration: {config}\n\nEmail sent successfully! Check your inbox.'
+    except Exception as e:
+        return f'Email configuration: {config}\n\nError sending email: {str(e)}'
+
+
+
+
+
