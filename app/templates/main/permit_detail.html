@@ -1,0 +1,210 @@
+{% extends "base.html" %}                                                     
+                                                                                  
+    {% block title %}Permit Application - {{ application.application_number }}{% endblock %}                                                                     
+                                                                                  
+    {% block content %}                                                           
+    <div class="container-fluid">                                                 
+        <!-- Header -->                                                           
+        <div class="d-flex justify-content-between align-items-center mb-4">      
+            <div>                                                                 
+                <h3>                                                              
+                    <i class="fas fa-file-alt text-primary me-2"></i>             
+                    Application {{ application.application_number }}              
+                </h3>                                                             
+                <p class="text-muted mb-0">                                       
+                    Submitted {{ application.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}                                                                   
+                </p>                                                              
+            </div>                                                                
+            <div>                                                                 
+                <span class="badge {{ application.status_badge_class }} fs-6">    
+                    {{ application.status }}                                      
+                </span>                                                           
+                {% if current_user.has_role('staff') and application.status == 'Submitted' %}                                                                  
+                    <a href="{{ url_for('main_bp.review_permit', permit_id=application.id) }}"                                                   
+                       class="btn btn-primary ms-2">                              
+                        <i class="fas fa-edit me-1"></i>Review                    
+                    </a>                                                          
+                {% endif %}                                                       
+            </div>                                                                
+        </div>                                                                    
+                                                                                  
+        <div class="row">                                                         
+            <!-- Application Details -->                                          
+            <div class="col-md-8">                                                
+                <div class="card mb-4">                                           
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">Application Details</h5>      
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        <div class="row">                                         
+                            <div class="col-md-6">                                
+                                <dl class="row">                                  
+                                    <dt class="col-sm-5">Permit Type:</dt>        
+                                    <dd class="col-sm-7">{{ application.permit_type.name }}</dd>                                                        
+                                                                                  
+                                    <dt class="col-sm-5">Department:</dt>         
+                                    <dd class="col-sm-7">{{ application.department.name }}</dd>                                                                    
+                                                                                  
+                                    <dt class="col-sm-5">Business Name:</dt>      
+                                    <dd class="col-sm-7">{{ application.business_name }}</dd>                                                           
+                                                                                  
+                                    <dt class="col-sm-5">Contact Phone:</dt>      
+                                    <dd class="col-sm-7">{{ application.contact_phone or 'Not provided' }}</dd>                                         
+                                </dl>                                             
+                            </div>                                                
+                            <div class="col-md-6">                                
+                                <dl class="row">                                  
+                                    <dt class="col-sm-5">Applicant:</dt>          
+                                    <dd class="col-sm-7">{{ application.applicant.full_name() }}</dd>                                                             
+                                                                                  
+                                    <dt class="col-sm-5">Email:</dt>              
+                                    <dd class="col-sm-7">{{ application.applicant.email }}</dd>                                                                   
+                                                                                  
+                                    <dt class="col-sm-5">County:</dt>             
+                                    <dd class="col-sm-7">{{ application.county.name }}</dd>                                                                    
+                                                                                  
+                                    <dt class="col-sm-5">Processing Fee:</dt>     
+                                    <dd class="col-sm-7">KSh {{ application.permit_type.processing_fee or '0.00' }}</dd>                                    
+                                </dl>                                             
+                            </div>                                                
+                        </div>                                                    
+                                                                                  
+                        {% if application.business_address %}                     
+                        <div class="mt-3">                                        
+                            <strong>Business Address:</strong>                    
+                            <p class="mb-0">{{ application.business_address }}</p>
+                        </div>                                                    
+                        {% endif %}                                               
+                                                                                  
+                        {% if application.application_data_dict.get('description')%}                                                                              
+                        <div class="mt-3">                                        
+                            <strong>Project Description:</strong>                 
+                            <p class="mb-0">{{ application.application_data_dict.description }}</p>                                                              
+                        </div>                                                    
+                        {% endif %}                                               
+                    </div>                                                        
+                </div>                                                            
+                                                                                  
+                <!-- Documents -->                                                
+                {% if application.documents.count() > 0 %}                        
+                <div class="card mb-4">                                           
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">                              
+                            <i class="fas fa-paperclip me-2"></i>                 
+                            Supporting Documents                                  
+                        </h5>                                                     
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        <div class="list-group list-group-flush">                 
+                            {% for doc in application.documents %}                
+                            <div class="list-group-item d-flex justify-content-between align-items-center">                                                    
+                                <div>                                             
+                                    <i class="fas fa-file me-2"></i>              
+                                    <strong>{{ doc.original_filename }}</strong>  
+                                    <small class="text-muted d-block">            
+                                        Uploaded {{ doc.uploaded_at.strftime('%b %d, %Y') }} • {{ doc.file_size_mb }} MB                                         
+                                    </small>                                      
+                                </div>                                            
+                                {% if doc.verified %}                             
+                                    <span class="badge bg-success">               
+                                        <i class="fas fa-check me-1"></i>Verified</span>                                       
+                                {% else %}                                        
+                                    <span class="badge bg-warning">               
+                                        <i class="fas fa-clock me-1"></i>Pending</span>                                       
+                                {% endif %}                                       
+                            </div>                                                
+                            {% endfor %}                                          
+                        </div>                                                    
+                    </div>                                                        
+                </div>                                                            
+                {% endif %}                                                       
+                                                                                  
+                <!-- Comments -->                                                 
+                {% if application.officer_comments %}                             
+                <div class="card">                                                
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">                              
+                            <i class="fas fa-comments me-2"></i>                  
+                            Review Comments                                       
+                        </h5>                                                     
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        <p class="mb-0">{{ application.officer_comments }}</p>    
+                        {% if application.assigned_officer %}                     
+                        <small class="text-muted">                                
+                            - {{ application.assigned_officer.full_name() }}      
+                        </small>                                                  
+                        {% endif %}                                               
+                    </div>                                                        
+                </div>                                                            
+                {% endif %}                                                       
+            </div>                                                                
+                                                                                  
+            <!-- Sidebar -->                                                      
+            <div class="col-md-4">                                                
+                <!-- Status Timeline -->                                          
+                <div class="card">                                                
+                    <div class="card-header">                                     
+                        <h5 class="card-title mb-0">                              
+                            <i class="fas fa-clock me-2"></i>                     
+                            Application Timeline                                  
+                        </h5>                                                     
+                    </div>                                                        
+                    <div class="card-body">                                       
+                        {% if application.status_history_list %}                  
+                            <div class="timeline">                                
+                                {% for entry in application.status_history_list %}
+                                <div class="timeline-item">                       
+                                    <div class="timeline-marker bg-primary"></div>
+                                    <div class="timeline-content">                
+                                        <h6 class="mb-1">{{ entry.status }}</h6>  
+                                        {% if entry.comment %}                    
+                                            <p class="mb-1 small">{{ entry.comment }}</p>                                                                          
+                                        {% endif %}                               
+                                        <small class="text-muted">                
+                                            {{ entry.changed_at[:19] | replace('T',' ') }}                                                                         
+                                        </small>                                  
+                                    </div>                                        
+                                </div>                                            
+                                {% endfor %}                                      
+                            </div>                                                
+                        {% else %}                                                
+                            <p class="text-muted mb-0">No timeline available</p>  
+                        {% endif %}                                               
+                    </div>                                                        
+                </div>                                                            
+            </div>                                                                
+        </div>                                                                    
+    </div>                                                                        
+                                                                                  
+    <style>                                                                       
+    .timeline {                                                                   
+        position: relative;                                                       
+        padding-left: 2rem;                                                       
+    }                                                                             
+                                                                                  
+    .timeline-item {                                                              
+        position: relative;                                                       
+        padding-bottom: 1.5rem;                                                   
+    }                                                                             
+                                                                                  
+    .timeline-item:not(:last-child):before {                                      
+        content: '';                                                              
+        position: absolute;                                                       
+        left: -1.6rem;                                                            
+        top: 1rem;                                                                
+        bottom: -1.5rem;                                                          
+        width: 2px;                                                               
+        background-color: #dee2e6;                                                
+    }                                                                             
+                                                                                  
+    .timeline-marker {                                                            
+        position: absolute;                                                       
+        left: -2rem;                                                              
+        top: 0.25rem;                                                             
+        width: 0.75rem;                                                           
+        height: 0.75rem;                                                          
+        border-radius: 50%;                                                       
+    }                                                                             
+    </style>                                                                      
+    {% endblock %}
