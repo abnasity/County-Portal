@@ -22,9 +22,9 @@
                 <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
                 <h5>Apply for Permit</h5>
                 <p class="text-muted">Submit new permit applications</p>
-                <button class="btn btn-primary" disabled>
-                    Coming Soon
-                </button>
+                <a href="{{ url_for('main_bp.apply_permit') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Apply Now
+                </a>
             </div>
         </div>
     </div>
@@ -34,9 +34,9 @@
                 <i class="fas fa-search fa-3x text-info mb-3"></i>
                 <h5>Track Applications</h5>
                 <p class="text-muted">Monitor your application status</p>
-                <button class="btn btn-info" disabled>
-                    Coming Soon
-                </button>
+                <a href="#applications-section" class="btn btn-info scroll-to">
+                    <i class="fas fa-eye me-1"></i>View Applications
+                </a>
             </div>
         </div>
     </div>
@@ -46,9 +46,9 @@
                 <i class="fas fa-question-circle fa-3x text-warning mb-3"></i>
                 <h5>Get Help</h5>
                 <p class="text-muted">Contact county support</p>
-                <button class="btn btn-warning" disabled>
-                    Coming Soon
-                </button>
+                <a href="mailto:support@{{ county.name|lower|replace(' ', '') }}.gov.ke" class="btn btn-warning">
+                    <i class="fas fa-envelope me-1"></i>Contact Support
+                </a>
             </div>
         </div>
     </div>
@@ -94,162 +94,176 @@
         </div>
     </div>
 
-
-
-<!-- Permit Applications Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <h4>
-            <i class="fas fa-chart-pie text-primary me-2"></i>
-            My Permit Applications
-        </h4>
-    </div>
-</div>
-
-<!-- Statistics Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
-                <h3 class="mb-1">{{ stats.total_applications }}</h3>
-                <p class="text-muted mb-0">Total Applications</p>
-            </div>
+    <!-- Permit Applications Section -->
+    <div class="row mb-4" id="applications-section">
+        <div class="col-12">
+            <h4>
+                <i class="fas fa-chart-pie text-primary me-2"></i>
+                My Permit Applications
+            </h4>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                <h3 class="mb-1">{{ stats.pending_applications }}</h3>
-                <p class="text-muted mb-0">Pending</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                <h3 class="mb-1">{{ stats.approved_applications }}</h3>
-                <p class="text-muted mb-0">Approved</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
-                <h3 class="mb-1">{{ stats.rejected_applications }}</h3>
-                <p class="text-muted mb-0">Rejected</p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Quick Apply Section -->
-{% if permit_types %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-plus-circle me-2"></i>
-                    Quick Apply
-                </h5>
-                <a href="{{ url_for('main_bp.apply_permit') }}" class="btn btn-primary btn-sm">
-                    Apply for Permit
-                </a>
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                    <h3 class="mb-1">{{ stats.total_applications }}</h3>
+                    <p class="text-muted mb-0">Total Applications</p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for permit_type in permit_types %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h6 class="card-title">{{ permit_type.name }}</h6>
-                                <p class="card-text small text-muted">{{ permit_type.department.name }}</p>
-                                <p class="mb-2">
-                                    <strong>KSh {{ permit_type.processing_fee or '0.00' }}</strong>
-                                </p>
-                                <a href="{{ url_for('main_bp.apply_permit') }}?type={{ permit_type.id }}"
-                                   class="btn btn-outline-primary btn-sm">Apply</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                    <h3 class="mb-1">{{ stats.pending_applications }}</h3>
+                    <p class="text-muted mb-0">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <h3 class="mb-1">{{ stats.approved_applications }}</h3>
+                    <p class="text-muted mb-0">Approved</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                    <h3 class="mb-1">{{ stats.rejected_applications }}</h3>
+                    <p class="text-muted mb-0">Rejected</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endif %}
 
-<!-- Recent Applications -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-history me-2"></i>
-                    Recent Applications
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if applications %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Application #</th>
-                                <th>Permit Type</th>
-                                <th>Business Name</th>
-                                <th>Status</th>
-                                <th>Submitted</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for app in applications[:10] %}
-                            <tr>
-                                <td>
-                                    <code>{{ app.application_number }}</code>
-                                </td>
-                                <td>{{ app.permit_type.name }}</td>
-                                <td>{{ app.business_name }}</td>
-                                <td>
-                                    <span class="badge {{ app.status_badge_class }}">
-                                        {{ app.status }}
-                                    </span>
-                                </td>
-                                <td>{{ app.submitted_at.strftime('%b %d, %Y') }}</td>
-                                <td>
-                                    <a href="{{ url_for('main_bp.permit_detail', permit_id=app.id) }}"
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-eye me-1"></i>View
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="text-center py-4">
-                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                    <h5>No Applications Yet</h5>
-                    <p class="text-muted mb-3">You haven't submitted any permit applications.</p>
-                    <a href="{{ url_for('main_bp.apply_permit') }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Apply for Your First Permit
+    <!-- Quick Apply Section -->
+    {% if permit_types %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Quick Apply
+                    </h5>
+                    <a href="{{ url_for('main_bp.apply_permit') }}" class="btn btn-primary btn-sm">
+                        Apply for Permit
                     </a>
                 </div>
-                {% endif %}
+                <div class="card-body">
+                    <div class="row">
+                        {% for permit_type in permit_types %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">{{ permit_type.name }}</h6>
+                                    <p class="card-text small text-muted">{{ permit_type.department.name }}</p>
+                                    <p class="mb-2">
+                                        <strong>KSh {{ permit_type.processing_fee or '0.00' }}</strong>
+                                    </p>
+                                    <a href="{{ url_for('main_bp.apply_permit') }}?type={{ permit_type.id }}"
+                                       class="btn btn-outline-primary btn-sm">Apply</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Applications -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Recent Applications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Application #</th>
+                                    <th>Permit Type</th>
+                                    <th>Business Name</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications[:10] %}
+                                <tr>
+                                    <td>
+                                        <code>{{ app.application_number }}</code>
+                                    </td>
+                                    <td>{{ app.permit_type.name }}</td>
+                                    <td>{{ app.business_name }}</td>
+                                    <td>
+                                        <span class="badge {{ app.status_badge_class }}">
+                                            {{ app.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ app.submitted_at.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('main_bp.permit_detail', permit_id=app.id) }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <h5>No Applications Yet</h5>
+                        <p class="text-muted mb-3">You haven't submitted any permit applications.</p>
+                        <a href="{{ url_for('main_bp.apply_permit') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Apply for Your First Permit
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
-   
 
-
-
-</div>
+<script>
+    // Smooth scrolling for internal links
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollLinks = document.querySelectorAll('.scroll-to');
+        scrollLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
