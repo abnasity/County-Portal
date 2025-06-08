@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}County Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Welcome, {{ current_user.full_name() }} (County Admin)</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text">{{ stats.total_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Departments</h5>
+                    <p class="card-text">{{ stats.departments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if role_stats %}
+    <h4 class="mt-5">Role Statistics (County Scope)</h4>
+    <ul>
+        {% for role, count in role_stats.items() %}
+            <li>{{ role }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h4 class="mt-4">Recent Users in {{ county.name }}</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role(s)</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.full_name() }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% for role in user.roles %}
+                        {{ role.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
