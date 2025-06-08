@@ -4,7 +4,6 @@ from app.extensions import db, migrate, mail, security, csrf
 from config import Config
 import json
 
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -30,9 +29,7 @@ def create_app():
     from app.forms import ExtendedLoginForm, ExtendedRegisterForm
     from flask_security import hash_password
     
-    # **************Advanced topics*************
-    
-    # custom user registration handler
+    # Custom user registration handler
     from flask_security.signals import user_registered
     
     @user_registered.connect_via(app)
@@ -44,11 +41,7 @@ def create_app():
                 user.roles.append(default_role)                                   
                 db.session.commit()                                               
                                                                                   
-        print(f"New user registered: {user.email} in {user.county.name if user.
-  county else 'No County'}")
-    
-    
-    # *********End***********
+        print(f"New user registered: {user.email} in {user.county.name if user.county else 'No County'}")
     
     # setup flask security
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -56,29 +49,46 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        # county data
+        
+        # ============================================
+        # 1. COUNTY SETUP
+        # ============================================
         counties_data = [                                                         
-            {'name': 'Bomet County', 'code': '036', 'description': 'Kipsisgis County'},                                                                       
+            {'name': 'Bomet County', 'code': '036', 'description': 'Kipsigis County'},                                                                       
             {'name': 'Narok County', 'code': '033', 'description': 'Maa county'},                                                                       
             {'name': 'Kericho County', 'code': '035', 'description': 'Green county'},                                                                       
         ]
-        created_counties = {}
+        
+        # Create counties if they don't exist
+        bomet_county = None
         for county_data in counties_data:
-            county = County.query.filter_by(name=county_data['name']).first()
+            county = County.query.filter_by(code=county_data['code']).first()
             if not county:
                 county = County(**county_data)
                 db.session.add(county)
-                created_counties[county.code] = county
-        db.session.commit()
+                print(f"Created county: {county.name} (Code: {county.code})")
+            
+            # Store reference to Bomet County for later use
+            if county.code == '036':
+                bomet_county = county
         
-        # Create departments for each county                                      
+        db.session.commit()
+
+        if not bomet_county:
+            raise Exception("Bomet County (code 036) not found or created")
+
+        # ============================================
+        # 2. DEPARTMENT SETUP
+        # ============================================
         departments_data = [                                                      
             {'name': 'Trade & Commerce', 'code': 'TC'},                           
             {'name': 'Lands & Housing', 'code': 'LH'},                            
             {'name': 'Health Services', 'code': 'HS'},                            
             {'name': 'Environment & Water', 'code': 'EW'},                        
         ]
-        for county in created_counties.values():                                  
+        
+        # Create departments for all counties
+        for county in County.query.all():                                  
             for dept_data in departments_data:                                    
                 dept = Department.query.filter_by(                                
                     code=dept_data['code'],                                       
@@ -93,12 +103,11 @@ def create_app():
                     )                                                             
                     db.session.add(dept)                                         
                     print(f"Created department: {dept.name} in {county.name}")
-                db.session.commit()
-                
-                
-                
-                
-        """Initialize sample permit types for each department"""                  
+            db.session.commit()
+
+        # ============================================
+        # 3. PERMIT TYPES SETUP
+        # ============================================
         permit_types_data = [
             # Trade & Commerce permits                                            
             {                                                                     
@@ -111,7 +120,7 @@ def create_app():
             },                                                                    
             {                                                                     
                 'name': 'Trading License',                                        
-                'description': 'License for retail and wholesale trading  activities',                                                                    
+                'description': 'License for retail and wholesale trading activities',                                                                    
                 'department_code': 'TC',                                          
                 'processing_fee': 3000.00,                                        
                 'processing_days': 10,                                            
@@ -137,7 +146,7 @@ def create_app():
             # Health Services permits                                             
             {                                                                     
                 'name': 'Food Handler License',                                   
-                'description': 'License for individuals handling food  commercially',                                                                  
+                'description': 'License for individuals handling food commercially',                                                                  
                 'department_code': 'HS',                                          
                 'processing_fee': 1500.00,                                        
                 'processing_days': 7,                                             
@@ -170,7 +179,7 @@ def create_app():
             }                                                                     
         ]                                                                         
                                                                                   
-        for county in created_counties.values():                                  
+        for county in County.query.all():                                  
             for permit_data in permit_types_data:                                 
                 # Find the department for this permit type                        
                 department = Department.query.filter_by(                          
@@ -198,56 +207,70 @@ def create_app():
                         print(f"Created permit type: {permit_type.name} in {department.name}, {county.name}")                                              
                                                                                   
                 db.session.commit()        
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
 
-        # Create roles
+        # ============================================
+        # 4. ROLES SETUP
+        # ============================================
         roles_data = [
             {'name': 'super_admin', 'description': 'Administrator role with full access'},
             {'name': 'staff', 'description': 'County staff with limited access'},
+            {'name': 'county_admin', 'description': 'County-admin with access to a specific county'},
             {'name': 'citizen', 'description': 'Regular citizen with basic access'},
             {'name': 'guest', 'description': 'Guest user with minimal access'},
         ]
+        
         for role_data in roles_data:
             role = Role.query.filter_by(name=role_data['name']).first()
             if not role:
                 db.session.add(Role(**role_data))
+                print(f"Created role: {role_data['name']}")
         db.session.commit()
-        
-        
-        
 
-        # Create super admin user
-        admin_role = Role.query.filter_by(name='super_admin').first()
-        admin_user = User.query.filter_by(email='abdkpng@gmail.com').first()
+        # ============================================
+        # 5. USER SETUP
+        # ============================================
+        # -------------------------
+        # Create SUPER ADMIN user
+        # -------------------------
+        super_admin_role = Role.query.filter_by(name='super_admin').first()
+        super_admin_user = User.query.filter_by(email='abdkpng@gmail.com').first()
 
-        if not admin_user: 
-            admin_user = User(
+        if not super_admin_user:
+            super_admin_user = User(
                 email='abdkpng@gmail.com',
                 first_name="Kipngeno",
                 last_name="Abednego",
                 password=hash_password("@bd1998z"),
                 active=True,
-                county_id=created_counties['036'].id,
-                roles=[admin_role]
+                county_id=bomet_county.id,
+                roles=[super_admin_role]
             )
-            db.session.add(admin_user)
+            db.session.add(super_admin_user)
             db.session.commit()
-            print("Database initialised and superuser created.")
+            print("✅ Super Admin user created.")
         else:
-            print("Superuser already exists.")
-            
+            print("ℹ️ Super Admin user already exists.")
+
+        # -------------------------
+        # Create COUNTY ADMIN user
+        # -------------------------
+        county_admin_role = Role.query.filter_by(name='county_admin').first()
+        county_admin_user = User.query.filter_by(email='jethro@gmail.com').first()
+
+        if not county_admin_user:
+            county_admin_user = User(
+                email='jethro@gmail.com',
+                first_name="Jethro",
+                last_name="Kiprotich",
+                password=hash_password("@bd1998z"),
+                active=True,
+                county_id=bomet_county.id,
+                roles=[county_admin_role]
+            )
+            db.session.add(county_admin_user)
+            db.session.commit()
+            print("✅ County Admin user created.")
+        else:
+            print("ℹ️ County Admin user already exists.")
 
     return app
-
-
-
-
