@@ -2,7 +2,8 @@
                                                                                   
     # User Roles (matching your existing roles in _init_.py)                    
 class UserRoles:                                                              
-    SUPER_ADMIN = 'super_admin'                                               
+    SUPER_ADMIN = 'super_admin' 
+    COUNTY_ADMIN = 'county_admin'                                              
     STAFF = 'staff'                                                           
     CITIZEN = 'citizen'                                                       
     GUEST = 'guest'                                                           
