@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///county.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///county.db')  or \
+        f"postgresql://{os.getenv('POSTGRES_USER', 'devuser')}:{os.getenv('POSTGRES_PASSWORD')}@" \
+        f"{os.getenv('POSTGRES_HOST', 'db')}:{os.getenv('POSTGRES_PORT', '5432')}/{os.getenv('POSTGRES_DB', 'county')}"
+        
     SQLALCHEMY__TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY')
     SECRET_PASSWORD_SALT = os.getenv('SECRET_PASSWORD_SALT')
@@ -50,4 +53,5 @@ class Config:
     
     
     
+     
      
