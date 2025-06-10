@@ -1,0 +1,24 @@
+
+
+services:
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://devuser:devpassword@db:5432/county
+    env_file: .env
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+  db:
+    image: postgres:15-alpine  # Changed from postgresql to postgres
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: county
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
